@@ -15,11 +15,8 @@
                     </span>
                 </p>
             </div>
-            <a class="panel-block">
-                <div class="column is-9">
-                    jgthms.github.io
-                </div>
-
+            <a class="panel-block" v-for="item,key in lists">
+                <div class="column is-9" v-text="item.name"></div>
                 <span class="panel-icon column is-1">
                     <i class="has-text-danger fa fa-trash"></i>
                 </span>
@@ -41,8 +38,15 @@ export default {
     components:{Add},
     data() {
         return {
-            addActive: ''
+            addActive: '',
+            lists: [],
+            errors: {}
         }
+    },
+    mounted() {
+        axios.get('/getData')
+        .then(response=> this.lists = response.data)
+        .catch(error=> this.errors = error.response.data.errors)
     },
     methods: {
         openAdd: function () {
