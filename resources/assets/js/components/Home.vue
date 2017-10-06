@@ -6,6 +6,10 @@
                 <button class="button is-primary is-outlined" @click="openAdd">
                 Add new
                 </button>
+                <span class="is-pulled-right" v-if="loading">
+                    <i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>
+                </span>
+
             </p>
             <div class="panel-block">
                 <p class="control has-icons-left">
@@ -18,10 +22,10 @@
             <a class="panel-block" v-for="item,key in lists">
                 <div class="column is-9" v-text="item.name"></div>
                 <span class="panel-icon column is-1">
-                    <i class="has-text-danger fa fa-trash"></i>
+                    <i class="has-text-danger fa fa-trash" @click="del(key,item.id)"></i>
                 </span>
                 <span class="panel-icon column is-1">
-                    <i class="has-text-info fa fa-edit"></i>
+                    <i class="has-text-info fa fa-edit" @click="openUpdate(key)"></i>
                 </span>
                 <span class="panel-icon column is-1">
                     <i class="has-text-primary fa fa-eye" @click="openShow(key)"></i>
@@ -30,20 +34,24 @@
         </nav>
         <Add :openmodel="addActive" @closeRequest='close'></Add>
         <Show :openmodel="showActive" @closeRequest='close'></Show>
+        <Update :openmodel="updateActive" @closeRequest='close'></Update>
     </div>
 </template>
 
 <script>
 let Add = require('./Add.vue')
 let Show = require('./Show.vue')
+let Update = require('./Update.vue')
 export default {
-    components:{Add,Show},
+    components:{Add,Show,Update},
     data() {
         return {
             addActive: '',
             showActive: '',
+            updateActive: '',
             lists: [],
-            errors: {}
+            errors: {},
+            loading: false
         }
     },
     mounted() {
@@ -55,14 +63,28 @@ export default {
         openAdd: function () {
             this.addActive = 'is-active';
         },
-        close() {
-            this.addActive = '';
-            this.showActive = '';
-        },
         openShow(key) {
             this.$children[1].list = this.lists[key];
             this.showActive = 'is-active';
-        }
+        },
+        openUpdate(key) {
+            this.$children[2].list = this.lists[key];
+            this.updateActive = 'is-active';
+        },
+        del(key, id) {
+            this.loading = !this.loading;
+            if( confirm("Are You Sure?") ) {
+                axios.delete(`/phonebook/${id}`)
+                .then(response=> {
+                    this.lists.splice(key, 1);
+                    this.loading = !this.loading;
+                })
+            }
+
+        },
+        close() {
+            this.addActive = this.showActive = this.updateActive =  '';
+        },
     }
 }
 </script>

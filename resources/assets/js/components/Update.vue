@@ -3,7 +3,7 @@
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Add New Entry</p>
+                <p class="modal-card-title">Update {{ list.name }}'s Details</p>
                 <button class="delete" aria-label="close" @click="close"></button>
             </header>
             <section class="modal-card-body">
@@ -33,7 +33,7 @@
                 </form>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-success" @click="save">Save</button>
+                <button class="button is-success" @click="update">Update</button>
                 <button class="button" @click="close">Cancel</button>
             </footer>
         </div>
@@ -57,11 +57,9 @@ export default {
         close: function() {
             this.$emit('closeRequest');
         },
-        save() {
-            axios.post('/phonebook', this.list)
+        update() {
+            axios.patch(`/phonebook/${this.list.id}`, this.list)
             .then(response=> {
-                this.$parent.lists.push(response.data);
-                this.list = {name: '',phone: '',email: ''};
                 this.close();
             })
             .catch(error=> {
