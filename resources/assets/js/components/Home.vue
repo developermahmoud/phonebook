@@ -13,13 +13,13 @@
             </p>
             <div class="panel-block">
                 <p class="control has-icons-left">
-                    <input class="input is-small" type="text" placeholder="search">
+                    <input class="input is-small" type="text" placeholder="search" v-model="searchQuery">
                     <span class="icon is-small is-left">
                         <i class="fa fa-search"></i>
                     </span>
                 </p>
             </div>
-            <a class="panel-block" v-for="item,key in lists">
+            <a class="panel-block" v-for="item,key in filterLists">
                 <div class="column is-9" v-text="item.name"></div>
                 <span class="panel-icon column is-1">
                     <i class="has-text-danger fa fa-trash" @click="del(key,item.id)"></i>
@@ -51,7 +51,15 @@ export default {
             updateActive: '',
             lists: [],
             errors: {},
-            loading: false
+            loading: false,
+            searchQuery:"",
+        }
+    },
+    computed:{
+        filterLists: function() {
+            return this.lists.filter((list)=> {
+                return list.name.match(this.searchQuery)
+            });
         }
     },
     mounted() {

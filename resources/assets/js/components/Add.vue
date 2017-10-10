@@ -62,6 +62,13 @@ export default {
             .then(response=> {
                 this.$parent.lists.push(response.data);
                 this.list = {name: '',phone: '',email: ''};
+                this.$parent.lists.sort(function(a,b){
+                    if( a.name > b.name ) {
+                        return 1;
+                    } else if(a.name < b.name) {
+                        return -1;
+                    }
+                });
                 this.close();
             })
             .catch(error=> {
